@@ -1,0 +1,79 @@
+@if(!isLoggedIn()){
+  <section class="relative min-h-[90vh] flex flex-col items-center justify-center px-6 overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <img src="assets/bg-gaming.jpg" class="w-full h-full object-cover opacity-40" alt="Gaming Background">
+      <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-vortex-black to-vortex-black"></div>
+    </div>
+
+    <div class="relative z-10 w-full max-w-md bg-zinc-900/80 backdrop-blur-xl border border-white/10 p-10 rounded-3xl shadow-2xl text-center">
+      <div class="mb-6 flex justify-center">
+        <div class="w-16 h-16 bg-cyan-500/20 rounded-2xl flex items-center justify-center border border-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.3)]">
+          <span class="text-3xl">🎮</span>
+        </div>
+      </div>
+
+      <h1 class="text-3xl font-black text-white mb-2">Bienvenido a Vortex</h1>
+      <p class="text-gray-400 text-sm mb-8 leading-relaxed">
+        Compite en los mejores torneos de <span class="text-white font-bold">League of Legends</span> y demuestra tu nivel.
+      </p>
+
+      <button
+        (click)="loginWithGoogle()"
+        [disabled]="isLoading()"
+        class="w-full bg-white text-black font-bold py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-gray-200 transition-all active:scale-95 shadow-lg mb-6 disabled:opacity-50 disabled:cursor-not-allowed">
+
+        @if (isLoading()) {
+          <div class="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+          Cargando...
+        } @else {
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5" alt="Google">
+          Continuar con Google
+        }
+      </button>
+
+      <div class="mt-10 flex justify-center gap-6 text-[15px] text-gray-500 font-medium">
+        <span class="flex items-center gap-1">🛡️ Secure Login</span>
+        <span class="flex items-center gap-1">👥 3.5M Players</span>
+      </div>
+    </div>
+  </section>
+}
+
+
+<section class="py-24 px-6 bg-vortex-black">
+  <div class="max-w-6xl mx-auto text-center mb-16">
+    <span class="text-vortex-cyan font-black text-xs uppercase tracking-[0.3em]">Por qué elegir Vortex</span>
+    <h2 class="text-4xl md:text-5xl font-black text-white mt-4">La Plataforma Definitiva de Esports</h2>
+    <p class="text-gray-400 mt-6 max-w-2xl mx-auto">Diseñado por jugadores para jugadores. Experimenta la competición al más alto nivel con tecnología de vanguardia.</p>
+  </div>
+
+  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="bg-zinc-900/40 border border-white/5 p-8 rounded-2xl hover:border-vortex-cyan/30 transition-colors group">
+      <div class="w-12 h-12 bg-vortex-cyan/10 rounded-lg flex items-center justify-center text-vortex-cyan mb-6 group-hover:scale-110 transition-transform">
+        ⚡
+      </div>
+      <h3 class="text-white font-bold text-xl mb-4">Matchmaking Instantáneo</h3>
+      <p class="text-gray-400 text-sm leading-relaxed">Nuestro algoritmo avanzado te empareja con oponentes de tu nivel en segundos. Sin tiempos de espera innecesarios.</p>
+    </div>
+
+    <div class="bg-zinc-900/40 border border-white/5 p-8 rounded-2xl hover:border-vortex-purple/30 transition-colors group">
+      <div class="w-12 h-12 bg-vortex-purple/10 rounded-lg flex items-center justify-center text-vortex-purple mb-6 group-hover:scale-110 transition-transform">
+        💰
+      </div>
+      <h3 class="text-white font-bold text-xl mb-4">Premios Reales</h3>
+      <p class="text-gray-400 text-sm leading-relaxed">Compite por premios en efectivo, RP y skins exclusivas. Pagos automáticos y seguros directamente a tu cuenta.</p>
+    </div>
+
+    <div class="bg-zinc-900/40 border border-white/5 p-8 rounded-2xl hover:border-vortex-cyan/30 transition-colors group">
+      <div class="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-400 mb-6 group-hover:scale-110 transition-transform">
+        📈
+      </div>
+      <h3 class="text-white font-bold text-xl mb-4">Estadísticas Detalladas</h3>
+      <p class="text-gray-400 text-sm leading-relaxed">Analiza tu rendimiento con métricas profesionales. KDA, CS/min, control de visión y más para mejorar tu juego.</p>
+    </div>
+  </div>
+</section>
+
+@if (showOnboarding()) {
+  <vortex-onboarding-modal (finished)="showOnboarding.set(false)" />
+}

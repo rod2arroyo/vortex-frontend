@@ -1,0 +1,56 @@
+<nav class="bg-black/95 border-b border-white/5 px-6 py-3 flex items-center justify-between sticky top-0 z-50 backdrop-blur-sm relative">
+
+  <div class="flex items-center gap-2 cursor-pointer" routerLink="/">
+    <div class="w-8 h-8 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(34,211,238,0.5)]">
+      <span class="text-black font-black text-xl">🌀</span>
+    </div>
+    <span class="text-white font-black text-2xl tracking-tighter">VORTEX</span>
+  </div>
+
+  <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex gap-8 text-gray-400 text-sm font-bold uppercase tracking-widest">
+    <a routerLink="/tournaments" class="hover:text-white transition-colors">Torneos</a>
+    <a routerLink="/help" class="hover:text-white transition-colors">Contacto</a>
+  </div>
+
+  <div class="flex items-center gap-4">
+    <button class="text-gray-400 hover:text-white p-2">
+      <span class="material-symbols-outlined text-xl">search</span>
+    </button>
+
+    @if (!isLoggedIn()) {
+      <button
+        (click)="openLogin()"
+        class="bg-white text-black text-xs font-black px-5 py-2.5 rounded-lg hover:bg-gray-200 transition-all uppercase tracking-tighter">
+        Login
+      </button>
+    } @else {
+      <div class="flex items-center gap-3 pl-4 border-l border-white/10">
+
+        <div
+          routerLink="/profile"
+          class="flex items-center gap-3 cursor-pointer group hover:opacity-80 transition-opacity"
+          title="Ir a mi perfil">
+
+          <div class="flex flex-col items-end">
+            <span class="text-white text-xs font-black uppercase tracking-tighter leading-none group-hover:text-cyan-400 transition-colors">
+              {{ currentUser()?.internal_nick || 'Gamer' }}
+            </span>
+            <span class="text-cyan-400 text-[10px] font-bold uppercase">Pro Player</span>
+          </div>
+
+          <div class="w-8 h-8 rounded-full border-2 border-vortex-purple bg-zinc-800 flex items-center justify-center overflow-hidden group-hover:border-cyan-400 transition-colors">
+            <span class="text-xs">👤</span>
+          </div>
+        </div>
+
+        <button (click)="authService.logout()" class="text-gray-500 hover:text-red-500 p-1 ml-1" title="Cerrar sesión">
+          <span class="material-symbols-outlined text-sm">logout</span>
+        </button>
+      </div>
+    }
+  </div>
+</nav>
+
+@if (isLoginModalOpen()) {
+  <vortex-login-modal (close)="isLoginModalOpen.set(false)" />
+}

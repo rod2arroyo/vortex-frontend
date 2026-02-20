@@ -1,0 +1,183 @@
+@if (isLoading()) {
+  <div class="flex justify-center items-center py-20 min-h-[60vh]">
+    <i class="pi pi-spin pi-spinner text-4xl text-blue-500"></i>
+  </div>
+} @else {
+  @if (team()) {
+    <div class="max-w-6xl mx-auto px-6 py-8 animate-fade-in">
+
+      <button (click)="goBack()" class="flex items-center gap-2 text-gray-500 hover:text-white transition-colors mb-6 text-sm font-bold">
+        <i class="pi pi-arrow-left text-xs"></i> Volver a mis equipos
+      </button>
+
+      <div class="bg-[#0A0A0A] border border-white/10 rounded-2xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 shadow-xl relative overflow-hidden">
+
+        <div class="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-purple-600 via-indigo-600 to-blue-600"></div>
+
+        <div class="flex items-center gap-6 z-10">
+          <div class="w-24 h-24 rounded-2xl bg-[#5b21b6] flex items-center justify-center shadow-[0_0_20px_rgba(91,33,182,0.4)] shrink-0 border border-white/10">
+            @if (team()!.logo_url) {
+              <i class="pi pi-image text-3xl text-white"></i>
+            } @else {
+              <i class="pi pi-shield text-4xl text-white"></i>
+            }
+          </div>
+
+          <div>
+            <div class="flex items-center gap-3 mb-2">
+              <h1 class="text-3xl font-black text-white tracking-tight">{{ team()!.name }}</h1>
+
+              @if (isCaptain()) {
+                <button class="text-gray-500 hover:text-white transition-colors">
+                  <i class="pi pi-pencil text-sm"></i>
+                </button>
+              }
+
+              <div class="bg-blue-900/40 text-blue-400 text-[10px] font-bold px-2 py-1 rounded flex items-center gap-1 border border-blue-500/30 uppercase tracking-widest ml-2">
+                <i class="pi pi-crown text-[10px]"></i> Capitán
+              </div>
+            </div>
+
+            <div class="flex items-center gap-6 text-sm text-gray-400 font-medium">
+              <span class="flex items-center gap-1.5"><i class="pi pi-calendar text-sm"></i> Creado el {{ team()!.created_at | date:'dd MMM yyyy' }}</span>
+              <span class="flex items-center gap-1.5"><i class="pi pi-users text-sm"></i> {{ team()!.members.length }} de {{ MAX_MEMBERS }} Integrantes</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-3 w-full md:w-auto z-10">
+          <button class="w-full md:w-auto border border-white/20 bg-[#121212] hover:bg-white/5 text-white font-bold py-2.5 px-5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm">
+            <i class="pi pi-link"></i> Copiar Código de Invitación
+          </button>
+          @if (isCaptain()) {
+            <button (click)="eliminarEquipo()" class="w-full md:w-auto border border-red-900/50 bg-red-950/20 hover:bg-red-900/40 text-red-400 font-bold py-2.5 px-5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm">
+              Disolver Equipo
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="bg-[#0A0A0A] border border-white/10 rounded-2xl p-6 md:p-8 shadow-xl">
+
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+          <div>
+            <h2 class="text-xl font-bold text-white mb-1">Integrantes del Equipo</h2>
+            <p class="text-gray-500 text-sm">Gestiona los miembros de tu equipo</p>
+          </div>
+
+          @if (isCaptain() && team()!.members.length < MAX_MEMBERS) {
+            <button class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-5 rounded-xl transition-all flex items-center gap-2 text-sm shadow-[0_0_15px_rgba(37,99,235,0.3)]">
+              <i class="pi pi-user-plus"></i> Invitar Jugador
+            </button>
+          } @else if (!isCaptain()) {
+            <button (click)="abandonarEquipo()" class="border border-red-900/50 hover:bg-red-950/30 text-red-400 font-bold py-2.5 px-5 rounded-xl transition-all flex items-center gap-2 text-sm">
+              <i class="pi pi-sign-out"></i> Abandonar Equipo
+            </button>
+          }
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+            <tr class="text-[10px] text-gray-500 uppercase tracking-widest border-b border-white/10">
+              <th class="pb-4 font-bold pl-4">Jugador</th>
+              <th class="pb-4 font-bold">Cuenta de LoL</th>
+              <th class="pb-4 font-bold text-center">Rol</th>
+              <th class="pb-4 font-bold text-center pr-4">Acciones</th>
+            </tr>
+            </thead>
+
+            <tbody class="text-sm">
+              @for (member of team()!.members; track member.user_id) {
+                <tr class="border-b border-white/5 hover:bg-white/2 transition-colors group">
+                  <td class="py-4 pl-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-full bg-zinc-800 border-2 border-[#121212] flex items-center justify-center overflow-hidden shrink-0">
+                        <img [src]="'https://api.dicebear.com/7.x/avataaars/svg?seed=' + member.user_id" alt="Avatar" class="w-full h-full object-cover">
+                      </div>
+                      <div>
+                        <div class="text-white font-bold flex items-center gap-2">
+                          {{ member.riot_id_full || 'Jugador de Vortex' }}
+                        </div>
+                        <div class="text-gray-500 text-[10px] mt-0.5">
+                          ID: {{ member.user_id | slice:0:8 }}
+                        </div>
+                        <div class="text-gray-500 text-xs mt-0.5">
+                          @if (member.user_id === currentUser()?.id) {
+                            <span class="text-blue-400 font-medium">Tú</span>
+                          } @else {
+                            Se unió el {{ member.joined_at | date:'dd MMM' }}
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td class="py-4 font-medium">
+                    @if (member.riot_id_full) {
+                      <div class="flex items-center gap-2 text-green-400 text-xs">
+                        <i class="pi pi-check-circle"></i> {{ member.riot_id_full }}
+                      </div>
+                    } @else {
+                      <div class="flex items-center gap-2 text-red-400/80 text-xs">
+                        <i class="pi pi-exclamation-triangle"></i> Cuenta de LoL no vinculada
+                      </div>
+                    }
+                  </td>
+
+                  <td class="py-4 text-center">
+                    @if (team()!.captain_id === member.user_id) {
+                      <span class="inline-block bg-purple-900/30 text-purple-400 text-[10px] font-bold px-3 py-1 rounded-full border border-purple-500/20">
+                        Capitán
+                      </span>
+                    } @else {
+                      <span class="inline-block bg-blue-900/20 text-blue-400 text-[10px] font-bold px-3 py-1 rounded-full border border-blue-500/20">
+                        Miembro
+                      </span>
+                    }
+                  </td>
+
+                  <td class="py-4 text-center pr-4">
+                    @if (isCaptain() && member.user_id !== currentUser()?.id) {
+                      <button
+                        (click)="expulsarJugador(member.user_id)"
+                        class="text-gray-600 hover:text-red-500 transition-colors p-2 bg-[#121212] hover:bg-red-950/30 rounded-lg border border-transparent hover:border-red-900/50 opacity-0 group-hover:opacity-100 focus:opacity-100">
+                        <i class="pi pi-trash"></i>
+                      </button>
+                    } @else {
+                      <span class="text-gray-700">—</span>
+                    }
+                  </td>
+                </tr>
+              }
+
+              @for (empty of getEmptySlots(); track $index) {
+                <tr>
+                  <td colspan="5" class="py-3">
+                    <div class="border border-dashed border-white/5 bg-[#121212]/50 rounded-xl p-4 flex items-center gap-4 mx-4">
+                      <div class="w-8 h-8 rounded-full bg-zinc-800/50 flex items-center justify-center border border-white/5">
+                        <i class="pi pi-user-plus text-gray-600 text-xs"></i>
+                      </div>
+                      <span class="text-gray-600 text-sm font-medium">Espacio disponible</span>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-8 pt-4 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
+          <div class="flex items-center gap-2 text-gray-500">
+            <i class="pi pi-info-circle text-blue-500"></i>
+            <span class="font-medium text-white">{{ getLinkedAccountsCount() }} de {{ team()!.members.length }}</span> jugadores tienen su cuenta de LoL vinculada
+          </div>
+          <div class="text-gray-500 font-bold tracking-wider">
+            Total: <span class="text-white">{{ team()!.members.length }}/{{ MAX_MEMBERS }}</span> Integrantes
+          </div>
+        </div>
+
+      </div>
+    </div>
+  }
+}

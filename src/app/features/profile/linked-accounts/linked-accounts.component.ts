@@ -4,7 +4,7 @@ import { finalize } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { PlayerService } from '../../../core/auth/player.service';
 import { Skeleton } from 'primeng/skeleton';
-import { NgClass } from '@angular/common';
+import {NgClass,} from '@angular/common';
 
 type ServerOption = 'LAN' | 'LAS' | 'EUW';
 
@@ -13,7 +13,7 @@ type ServerOption = 'LAN' | 'LAS' | 'EUW';
   imports: [
     ReactiveFormsModule,
     Skeleton,
-    NgClass
+    NgClass,
   ],
   templateUrl: './linked-accounts.component.html',
 })
@@ -86,5 +86,18 @@ export class LinkedAccountsComponent implements OnInit {
         });
       }
     });
+  }
+
+  getRankImagePath(tier: string): string {
+    // 1. Si no hay rango
+    if (!tier || tier === 'UNRANKED') {
+      return '/ranks/Rank=Bronze.png'; // <--- Fíjate que empieza directo con /ranks/
+    }
+
+    // 2. Formatear el texto (DIAMOND -> Diamond)
+    const formattedTier = tier.charAt(0).toUpperCase() + tier.slice(1).toLowerCase();
+
+    // 3. Devolver la ruta correcta desde la raíz
+    return `/ranks/Rank=${formattedTier}.png`;
   }
 }

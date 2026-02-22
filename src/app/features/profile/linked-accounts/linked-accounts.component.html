@@ -117,24 +117,43 @@
         </div>
 
         <div class="md:col-span-1 space-y-4">
-          @for (rank of riotProfile().ranks; track rank.queueType) {
-            <div class="bg-[#0D0D0D] border border-white/10 rounded-xl p-5 hover:border-white/20 transition-colors">
-              <div class="flex justify-between items-center mb-3">
-                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
-                      {{ rank.queueType === 'RANKED_SOLO_5x5' ? 'Solo / Duo' : 'Flex' }}
-                    </span>
-                <span class="text-yellow-500">🏆</span>
-              </div>
-              <div class="flex items-center gap-3">
-                <div class="text-white font-bold text-xl">
-                  {{ rank.tier }} {{ rank.rank }}
+          <div class="md:col-span-1 space-y-4">
+            @for (rank of riotProfile().ranks; track rank.queueType) {
+              <div class="bg-[#0D0D0D] border border-white/10 rounded-xl p-5 hover:border-white/20 transition-colors">
+
+                <div class="flex justify-between items-center mb-3">
+          <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+            {{ rank.queueType === 'RANKED_SOLO_5x5' ? 'Solo / Duo' : 'Flex' }}
+          </span>
                 </div>
+
+                <div class="flex items-center gap-4">
+                  <div class="w-14 h-14 flex items-center justify-center">
+                    <img
+                      [src]="getRankImagePath(rank.tier)"
+                      [alt]="rank.tier"
+                      class="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+                  </div>
+
+                  <div>
+                    <div class="text-white font-bold text-xl leading-none mb-1">
+                      {{ rank.tier }} {{ rank.rank }}
+                    </div>
+                    <div class="text-gray-500 text-xs">
+                      <span class="text-blue-400 font-bold">{{ rank.leaguePoints }} LP</span>
+                      <span class="mx-1">•</span>
+                      <span class="text-green-500">{{ rank.wins }}W</span> / <span class="text-red-500">{{ rank.losses }}L</span>
+                    </div>
+                  </div>
+                </div>
+
               </div>
-              <div class="text-gray-500 text-xs mt-1">
-                {{ rank.leaguePoints }} LP <span class="mx-1">•</span> {{ rank.wins }}W / {{ rank.losses }}L
+            } @empty {
+              <div class="bg-[#0D0D0D] border border-white/10 rounded-xl p-5 text-center">
+                <p class="text-gray-500 text-sm font-bold uppercase">Sin clasificar</p>
               </div>
-            </div>
-          }
+            }
+          </div>
         </div>
 
       </div>

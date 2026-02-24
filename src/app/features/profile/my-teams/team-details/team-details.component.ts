@@ -1,9 +1,9 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import {TeamService} from '../../../../core/auth/team.service';
-import {TeamResponse} from '../../../../core/models/team.model';
-import {UserService} from '../../../../core/auth/user.service';
+import { TeamService } from '../../../../core/auth/team.service';
+import { TeamResponse } from '../../../../core/models/team.model';
+import { UserService } from '../../../../core/auth/user.service';
 
 @Component({
   selector: 'app-team-details',

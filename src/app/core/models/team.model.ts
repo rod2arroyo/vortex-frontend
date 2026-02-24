@@ -1,6 +1,7 @@
 export interface TeamMemberResponse {
   user_id: string;
   joined_at: string;
+  player_name: string;
   riot_id_full?: string; // Nuevo campo que viene de la @property
 }
 

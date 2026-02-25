@@ -3,14 +3,11 @@ import { MainLayoutComponent } from './layouts/main-layout/main-layout.component
 import {authGuard} from './core/guard/auth.guard';
 
 export const routes: Routes = [
-  // 1. Rutas Públicas / Específicas (Sin Layout Principal o con uno distinto)
   {
     path: 'invite/:token',
     loadComponent: () => import('./features/invites/invite-landing/invite-landing.component')
       .then(m => m.InviteLandingComponent)
   },
-
-  // 2. Rutas de la Aplicación (Con MainLayout)
   {
     path: '',
     component: MainLayoutComponent,
@@ -36,8 +33,6 @@ export const routes: Routes = [
       }
     ]
   },
-
-  // 3. Comodín (Siempre al final)
   {
     path: '**',
     redirectTo: 'dashboard'

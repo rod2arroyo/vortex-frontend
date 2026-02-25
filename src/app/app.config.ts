@@ -25,15 +25,14 @@ export const appConfig: ApplicationConfig = {
       const authService = inject(AuthService);
       return authService.bootstrapAuth();
     }),
-
     providePrimeNG({
       theme: {
         preset: Aura,
         options: {
-          darkModeSelector: '.vortex-dark', // Selector para activar el modo oscuro
+          darkModeSelector: '.vortex-dark',
           cssLayer: {
             name: 'primeng',
-            order: 'tailwind-base, primeng, tailwind-utilities' // Evita conflictos con Tailwind
+            order: 'tailwind-base, primeng, tailwind-utilities'
           }
         }
       }

@@ -1,11 +1,12 @@
 import {Component, computed, effect, inject, signal} from '@angular/core';
-import {RouterLink} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '../../../core/auth/auth.service';
 import {LoginModalComponent} from '../../../shared/components/login-modal/login-modal.component';
 import {UserService} from '../../../core/auth/user.service';
 import {DatePipe, NgClass} from '@angular/common';
 import {NotificationService} from '../../../core/auth/notification.service';
 import {NotificationResponse} from '../../../core/models/notification.model';
+import {InvitationService} from '../../../core/auth/invitation.service';
 
 @Component({
   selector: 'vortex-header',
@@ -21,6 +22,8 @@ export class HeaderComponent {
   public userService = inject(UserService);
   public authService = inject(AuthService);
   public notificationService = inject(NotificationService);
+  private invitationService = inject(InvitationService);
+  private router = inject(Router);
 
   // Estado local para abrir el pop-up
   isLoginModalOpen = signal(false);
@@ -96,5 +99,39 @@ export class HeaderComponent {
 
   openLogin() {
     this.isLoginModalOpen.set(true);
+  }
+
+  onAcceptInvite(notification: NotificationResponse, event: Event) {
+    event.stopPropagation(); // Evita que se dispare el click del contenedor (markRead)
+
+    // 1. Extraemos el token del objeto data (según tu modelo Python: data={"token": "..."})
+    const token = notification.data?.token;
+    const teamId = notification.data?.team_id; // Útil para redirigir después
+
+    if (!token) {
+      alert('Error: La invitación no contiene un token válido.');
+      return;
+    }
+
+    // 2. Llamamos al servicio
+    this.invitationService.acceptInvitation(token).subscribe({
+      next: (res) => {
+        // 3. Feedback visual
+        alert(res.message || '¡Te has unido al equipo exitosamente!');
+
+        // 4. Marcamos la notificación como leída y actualizamos la UI
+        this.markRead(notification);
+
+        // 5. Opcional: Redirigir al detalle del equipo
+        if (teamId) {
+          this.router.navigate(['/teams', teamId]);
+          this.showNotifications.set(false); // Cerrar dropdown
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        alert(err.error?.detail || 'Ocurrió un error al aceptar la invitación.');
+      }
+    });
   }
 }

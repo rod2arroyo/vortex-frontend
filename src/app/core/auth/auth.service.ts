@@ -12,6 +12,7 @@ export class AuthService {
   // Inyectamos UserService para actualizar el estado del usuario tras el login
   private userService = inject(UserService);
   private router = inject(Router);
+  private pendingInviteToken = signal<string | null>(null);
 
   // --- Estado de Tokens ---
   private accessToken = signal<string | null>(null);
@@ -76,5 +77,19 @@ export class AuthService {
     return this.http.post(`${environment.apiUrl}/auth/refresh`, {
       refresh_token: this.refreshToken()
     });
+  }
+
+  setPendingInvite(token: string) {
+    this.pendingInviteToken.set(token);
+    sessionStorage.setItem('vortex_pending_invite', token);
+  }
+
+  getPendingInvite(): string | null {
+    return this.pendingInviteToken() || sessionStorage.getItem('vortex_pending_invite');
+  }
+
+  clearPendingInvite() {
+    this.pendingInviteToken.set(null);
+    sessionStorage.removeItem('vortex_pending_invite');
   }
 }

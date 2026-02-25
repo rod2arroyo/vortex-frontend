@@ -1,57 +1,69 @@
 import { Component, AfterViewInit, ViewChild, ElementRef, inject, signal, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {AuthService} from '../../../core/auth/auth.service';
-import {UserService} from '../../../core/auth/user.service';
-import {environment} from '../../../../environments/environments';
+import { AuthService } from '../../../core/auth/auth.service';
+import { UserService } from '../../../core/auth/user.service';
+import { environment } from '../../../../environments/environments';
+import {Skeleton} from 'primeng/skeleton';
+
+declare var google: any;
 
 @Component({
-  selector: 'vortex-login-box', // Asegúrate de que coincida con lo que usas en el HTML
+  selector: 'vortex-login-box',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, Skeleton],
   templateUrl: './login-box.component.html'
 })
 export class LoginBoxComponent implements AfterViewInit {
   private userService = inject(UserService);
   private authService = inject(AuthService);
 
-  // 1. Capturamos el elemento del HTML
   @ViewChild('googleBtnRef') googleBtnElement!: ElementRef;
 
   isLoading = signal(false);
+  isGoogleLibLoaded = signal(false);
   loginSuccess = output<void>();
 
   // 2. Usamos ngAfterViewInit en lugar de ngOnInit
   ngAfterViewInit() {
-    // @ts-ignore
-    google.accounts.id.initialize({
-      client_id: environment.clientId,
-      callback: (response: any) => this.handleGoogleLogin(response),
-      auto_select: false,
-      cancel_on_tap_outside: false
-    });
-
-    // 3. Pasamos el nativeElement en lugar de getElementById
-    // @ts-ignore
-    google.accounts.id.renderButton(
-      this.googleBtnElement.nativeElement,
-      {
-        theme: 'filled_black', // Puedes cambiar a 'filled_blue' si prefieres
-        size: 'large',
-        width: 350,
-        text: 'continue_with',
-        shape: 'pill'
-      }
-    );
+    this.ensureGoogleLibraryLoaded();
   }
 
-  loginWithGoogle() {
-    this.isLoading.set(true);
-    // @ts-ignore
-    google.accounts.id.prompt((notification: any) => {
-      if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-        this.isLoading.set(false);
+  private ensureGoogleLibraryLoaded() {
+    // Revisamos periódicamente si Google ya cargó
+    const checkInterval = setInterval(() => {
+      if (typeof google !== 'undefined' && google.accounts) {
+        clearInterval(checkInterval);
+        this.initGoogleBtn();
       }
-    });
+    }, 100);
+  }
+
+  private initGoogleBtn() {
+    try {
+      google.accounts.id.initialize({
+        client_id: environment.clientId,
+        callback: (response: any) => this.handleGoogleLogin(response),
+        auto_select: false,
+        cancel_on_tap_outside: false
+      });
+
+      google.accounts.id.renderButton(
+        this.googleBtnElement.nativeElement,
+        {
+          theme: 'filled_black',
+          size: 'large',
+          width: 350,
+          text: 'continue_with',
+          shape: 'pill'
+        }
+      );
+
+      // Una vez renderizado, apagamos el skeleton
+      this.isGoogleLibLoaded.set(true);
+
+    } catch (error) {
+      console.error('Error al inicializar Google:', error);
+    }
   }
 
   private handleGoogleLogin(response: any) {

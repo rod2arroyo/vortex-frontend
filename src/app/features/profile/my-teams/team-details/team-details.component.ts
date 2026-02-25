@@ -4,11 +4,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TeamService } from '../../../../core/auth/team.service';
 import { TeamResponse } from '../../../../core/models/team.model';
 import { UserService } from '../../../../core/auth/user.service';
+import { InvitePlayerModalComponent } from './invite-player-modal/invite-player-modal.component';
 
 @Component({
   selector: 'app-team-details',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, InvitePlayerModalComponent],
   templateUrl: './team-details.component.html'
 })
 export class TeamDetailsComponent implements OnInit {
@@ -21,6 +22,7 @@ export class TeamDetailsComponent implements OnInit {
   teamId = '';
   team = signal<TeamResponse | null>(null);
   isLoading = signal<boolean>(true);
+  showInviteModal = signal(false);
 
   // Límite máximo de integrantes según tu diseño
   MAX_MEMBERS = 7;

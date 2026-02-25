@@ -6,6 +6,7 @@ import { UserService } from '../../../core/auth/user.service';
 import { Dialog } from 'primeng/dialog';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import {Skeleton} from 'primeng/skeleton';
 
 @Component({
   selector: 'vortex-my-teams',
@@ -14,6 +15,7 @@ import { RouterLink } from '@angular/router';
     ReactiveFormsModule,
     DatePipe,
     RouterLink,
+    Skeleton,
   ],
   templateUrl: './my-teams.component.html',
 })

@@ -12,9 +12,34 @@
   </div>
 
   @if (isLoading()) {
-    <div class="flex justify-center items-center py-20">
-      <div class="w-10 h-10 border-4 border-vortex-cyan border-t-transparent rounded-full animate-spin"></div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      @for (dummy of [1,2,3]; track dummy) {
+        <div class="bg-[#0A0A0A] border border-white/10 rounded-2xl p-6 shadow-2xl">
+
+          <div class="flex justify-between items-start mb-5">
+            <p-skeleton shape="circle" size="4rem" styleClass="bg-zinc-800"></p-skeleton>
+            <p-skeleton width="5rem" height="1.5rem" borderRadius="16px" styleClass="bg-zinc-800"></p-skeleton>
+          </div>
+
+          <p-skeleton width="70%" height="2rem" styleClass="mb-2 bg-zinc-800"></p-skeleton>
+          <p-skeleton width="40%" height="1rem" styleClass="mb-6 bg-zinc-800/50"></p-skeleton>
+
+          <div class="border border-white/5 rounded-xl p-4 bg-[#0F0F0F] mb-4">
+            <div class="flex justify-between items-center">
+              <p-skeleton width="40%" height="1.2rem" styleClass="bg-zinc-800"></p-skeleton>
+              <div class="flex -space-x-2">
+                <p-skeleton shape="circle" size="2rem" styleClass="bg-zinc-800 border-2 border-[#0F0F0F]"></p-skeleton>
+                <p-skeleton shape="circle" size="2rem" styleClass="bg-zinc-800 border-2 border-[#0F0F0F]"></p-skeleton>
+              </div>
+            </div>
+          </div>
+
+          <p-skeleton width="100%" height="3.5rem" borderRadius="12px" styleClass="bg-zinc-800"></p-skeleton>
+        </div>
+      }
     </div>
+
   } @else {
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -55,13 +80,6 @@
               </div>
 
               <div class="flex -space-x-2 overflow-hidden">
-                <div class="inline-block h-8 w-8 rounded-full border-2 border-[#0F0F0F] bg-zinc-800 items-center justify-center">
-                  <i class="pi pi-user text-[10px] text-gray-400"></i>
-                </div>
-                <div class="inline-block h-8 w-8 rounded-full border-2 border-[#0F0F0F] bg-zinc-800 items-center justify-center">
-                  <i class="pi pi-user text-[10px] text-gray-400"></i>
-                </div>
-
                 @if (team.members.length > 2) {
                   <div class="inline-block h-8 w-8 rounded-full border-2 border-[#0F0F0F] bg-[#121212] items-center justify-center text-[10px] text-blue-400 font-bold">
                     +{{ team.members.length - 2 }}
@@ -84,13 +102,13 @@
           </div>
         </div>
       } @empty {
-        <div class="col-span-full bg-[#121212] border border-white/5 rounded-2xl p-12 text-center">
-          <div class="w-20 h-20 bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl">
+        <div class="col-span-full bg-[#121212] border border-white/5 rounded-2xl p-12 text-center animate-in fade-in zoom-in duration-300">
+          <div class="w-20 h-20 bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl border border-white/5">
             🏆
           </div>
           <h3 class="text-xl font-bold text-white mb-2">No tienes equipos aún</h3>
-          <p class="text-gray-500 mb-6">Crea tu propia escuadra o espera a ser invitado por un capitán.</p>
-          <button (click)="openCreateModal()" class="text-blue-400 hover:underline font-bold">Crear mi primer equipo</button>
+          <p class="text-gray-500 mb-6 max-w-sm mx-auto">Crea tu propia escuadra para competir o espera a ser invitado por un capitán.</p>
+          <button (click)="openCreateModal()" class="text-blue-400 hover:text-blue-300 hover:underline font-bold transition-colors">Crear mi primer equipo</button>
         </div>
       }
     </div>

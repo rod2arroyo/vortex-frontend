@@ -10,8 +10,19 @@
     Compite en los mejores torneos de <span class="text-white font-bold">League of Legends</span> y demuestra tu nivel.
   </p>
 
-  <div class="flex flex-col items-center">
-    <div #googleBtnRef class="w-full flex justify-center mb-6 min-h-[50px]"></div>
+  <div class="flex flex-col items-center w-full">
+
+    <div class="w-full flex justify-center mb-6 min-h-11"> @if (!isGoogleLibLoaded()) {
+      <p-skeleton
+        width="350px"
+        height="44px"
+        borderRadius="24px"
+        styleClass="bg-zinc-800 border border-white/10 shadow-lg">
+      </p-skeleton>
+    }
+
+      <div #googleBtnRef [class.hidden]="!isGoogleLibLoaded()"></div>
+    </div>
 
     @if (isLoading()) {
       <div class="flex items-center gap-2 text-gray-400 text-sm animate-pulse mb-6">

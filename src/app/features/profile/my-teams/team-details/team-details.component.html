@@ -63,7 +63,9 @@
           </div>
 
           @if (isCaptain() && team()!.members.length < MAX_MEMBERS) {
-            <button class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-5 rounded-xl transition-all flex items-center gap-2 text-sm shadow-[0_0_15px_rgba(37,99,235,0.3)]">
+            <button
+              (click)="showInviteModal.set(true)"
+              class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-5 rounded-xl transition-all flex items-center gap-2 text-sm shadow-[0_0_15px_rgba(37,99,235,0.3)]">
               <i class="pi pi-user-plus"></i> Invitar Jugador
             </button>
           } @else if (!isCaptain()) {
@@ -175,3 +177,8 @@
     </div>
   }
 }
+
+<vortex-invite-player-modal
+  [(visible)]="showInviteModal"
+  [teamId]="teamId">
+</vortex-invite-player-modal>

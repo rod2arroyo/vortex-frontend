@@ -25,14 +25,11 @@ export class HeaderComponent {
   private invitationService = inject(InvitationService);
   private router = inject(Router);
 
-  // Estado local para abrir el pop-up
   isLoginModalOpen = signal(false);
-  showNotifications = signal(false); // Controla el dropdown
+  showNotifications = signal(false);
 
-  // Datos
   notifications = signal<NotificationResponse[]>([]);
 
-  // Computed para facilitar el uso en el a
   currentUser = computed(() => this.userService.currentUser());
   isLoggedIn = computed(() => !!this.currentUser());
 
@@ -41,7 +38,6 @@ export class HeaderComponent {
   );
 
   constructor() {
-    // Si el usuario se loguea, cargamos notificaciones automáticamente
     effect(() => {
       if (this.isLoggedIn()) {
         this.loadNotifications();
@@ -59,34 +55,48 @@ export class HeaderComponent {
   toggleNotifications() {
     this.showNotifications.update(v => !v);
     if (this.showNotifications()) {
-      this.loadNotifications(); // Recargar al abrir para tener datos frescos
+      this.loadNotifications();
     }
   }
 
   markRead(notification: NotificationResponse) {
     if (notification.is_read) return;
-
-    // Optimistic UI: Actualizamos localmente primero para que se sienta instantáneo
     this.notifications.update(list =>
       list.map(n => n.id === notification.id ? { ...n, is_read: true } : n)
     );
-
-    // Llamada al backend
     this.notificationService.markAsRead(notification.id).subscribe();
   }
 
-  // Helper para asignar iconos según el tipo (basado en tu imagen)
+  /**
+   * Elimina la notificación visualmente y en el backend
+   */
+  removeNotification(event: Event, notificationId: string) {
+    event.stopPropagation(); // Evita marcar como leído o abrir detalles
+
+    // 1. Optimistic Update: Lo sacamos de la lista inmediatamente
+    this.notifications.update(list => list.filter(n => n.id !== notificationId));
+
+    // 2. Llamada al backend
+    this.notificationService.deleteNotification(notificationId).subscribe({
+      error: (err) => {
+        console.error('Error eliminando notificación', err);
+        // Opcional: Revertir si falla (volver a cargar)
+        this.loadNotifications();
+      }
+    });
+  }
+
+  // Actualizado para devolver clases de PrimeIcons
   getIconByType(type: string): string {
     switch (type) {
-      case 'TEAM_INVITE': return 'group_add';
-      case 'PAYMENT_SUCCESS': return 'check_circle';
-      case 'MATCH_START': return 'schedule'; // Reloj
-      case 'TOURNAMENT_NEW': return 'emoji_events'; // Trofeo
-      default: return 'notifications';
+      case 'TEAM_INVITE': return 'pi-users';
+      case 'PAYMENT_SUCCESS': return 'pi-check-circle';
+      case 'MATCH_START': return 'pi-clock';
+      case 'TOURNAMENT_NEW': return 'pi-trophy';
+      default: return 'pi-bell'; // Icono por defecto (Campana)
     }
   }
 
-  // Helper para colores de fondo del icono
   getIconBgColor(type: string): string {
     switch (type) {
       case 'TEAM_INVITE': return 'bg-indigo-500';
@@ -103,29 +113,22 @@ export class HeaderComponent {
 
   onAcceptInvite(notification: NotificationResponse, event: Event) {
     event.stopPropagation(); // Evita que se dispare el click del contenedor (markRead)
-
-    // 1. Extraemos el token del objeto data (según tu modelo Python: data={"token": "..."})
     const token = notification.data?.token;
-    const teamId = notification.data?.team_id; // Útil para redirigir después
+    const teamId = notification.data?.team_id;
 
     if (!token) {
       alert('Error: La invitación no contiene un token válido.');
       return;
     }
 
-    // 2. Llamamos al servicio
     this.invitationService.acceptInvitation(token).subscribe({
       next: (res) => {
-        // 3. Feedback visual
         alert(res.message || '¡Te has unido al equipo exitosamente!');
-
-        // 4. Marcamos la notificación como leída y actualizamos la UI
         this.markRead(notification);
 
-        // 5. Opcional: Redirigir al detalle del equipo
         if (teamId) {
           this.router.navigate(['/teams', teamId]);
-          this.showNotifications.set(false); // Cerrar dropdown
+          this.showNotifications.set(false);
         }
       },
       error: (err) => {

@@ -37,6 +37,12 @@ export class HeaderComponent {
     this.notifications().filter(n => !n.is_read).length
   );
 
+  isAdmin = computed(() => {
+    const user = this.userService.currentUser();
+    console.warn(user)
+    return user?.role === 'admin';
+  });
+
   constructor() {
     effect(() => {
       if (this.isLoggedIn()) {

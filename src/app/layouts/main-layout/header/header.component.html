@@ -6,9 +6,16 @@
       </div>
       <span class="text-white font-black text-2xl tracking-tighter">VORTEX</span>
     </div>
-    <div class="hidden md:flex gap-8 text-gray-400 text-sm font-bold uppercase tracking-widest">
+
+    <div class="hidden md:flex gap-8 text-gray-400 text-sm font-bold uppercase tracking-widest items-center">
       <a routerLink="/tournaments" class="hover:text-white transition-colors">Torneos</a>
       <a routerLink="/help" class="hover:text-white transition-colors">Ayuda</a>
+
+      @if (isAdmin()) {
+        <a routerLink="/admin/dashboard" class="text-amber-500 hover:text-amber-400 transition-colors flex items-center gap-1 border border-amber-500/30 px-3 py-1 rounded bg-amber-500/10">
+          <i class="pi pi-shield"></i> Admin
+        </a>
+      }
     </div>
   </div>
 

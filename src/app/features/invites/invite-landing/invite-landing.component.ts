@@ -33,7 +33,6 @@ export class InviteLandingComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Obtenemos el token de la ruta principal (ej: /invite/ABC-123)
     this.token = this.route.snapshot.paramMap.get('token') || '';
 
     if (!this.isLoggedIn()) {
@@ -41,13 +40,10 @@ export class InviteLandingComponent implements OnInit {
     }
   }
 
-  // --- Helper para limpiar la notificación ---
   private resolveNotification() {
-    // Buscamos si en la URL vino un ?notif_id=XYZ
     const notifId = this.route.snapshot.queryParamMap.get('notif_id');
 
     if (notifId) {
-      // Marcamos como leída en segundo plano (fire & forget)
       this.notificationService.markAsRead(notifId).subscribe({
         error: (err) => console.error('Error marcando notificación', err)
       });
@@ -58,7 +54,6 @@ export class InviteLandingComponent implements OnInit {
     this.isLoading.set(true);
     this.invitationService.acceptInvitation(this.token).subscribe({
       next: (res) => {
-        // 3. Al aceptar con éxito, marcamos la notificación como leída
         this.resolveNotification();
 
         this.authService.clearPendingInvite();
@@ -67,9 +62,6 @@ export class InviteLandingComponent implements OnInit {
       },
       error: (err) => {
         this.isLoading.set(false);
-        // Incluso si falla (ej: ya eras miembro), podríamos querer borrar la notificación
-        // para que no siga molestando, pero eso depende de tu lógica.
-        // Por seguridad, aquí NO la borramos para que el usuario pueda intentar de nuevo.
         alert(err.error?.detail || 'El enlace ha expirado o no es válido.');
         this.router.navigate(['/dashboard']);
       }
@@ -77,7 +69,6 @@ export class InviteLandingComponent implements OnInit {
   }
 
   onReject() {
-    // 4. Si rechaza, también queremos que desaparezca de la lista
     this.resolveNotification();
 
     this.authService.clearPendingInvite();

@@ -5,7 +5,7 @@ export interface User {
   full_name?: string; // Asumo que viene de UserBase
   avatar_url?: string; // Asumo que viene de UserBase
   google_id?: string;
-  role: 'USER' | 'ADMIN';
+  role: 'player' | 'admin';
 
   // Campos editables
   internal_nick?: string;

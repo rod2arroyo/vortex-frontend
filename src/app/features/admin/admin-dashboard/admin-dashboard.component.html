@@ -1,0 +1,131 @@
+<div class="min-h-screen bg-[#050505] p-6 pt-10">
+
+  <div class="max-w-7xl mx-auto">
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h1 class="text-3xl font-black text-white">Panel de Administración</h1>
+        <p class="text-gray-400 text-sm">Gestiona los torneos de Vortex</p>
+      </div>
+      <button
+        (click)="openCreate()"
+        class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-xl transition-colors flex items-center gap-2">
+        <i class="pi pi-plus"></i> Nuevo Torneo
+      </button>
+    </div>
+
+    <div class="bg-[#121212] border border-white/10 rounded-2xl overflow-hidden shadow-xl">
+      <table class="w-full text-left border-collapse">
+        <thead class="bg-zinc-900 text-gray-400 text-xs uppercase tracking-wider font-bold">
+        <tr>
+          <th class="p-4">Nombre</th>
+          <th class="p-4">Fecha Inicio</th>
+          <th class="p-4">Estado</th>
+          <th class="p-4 text-center">Inscritos</th>
+          <th class="p-4 text-right">Acciones</th>
+        </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5">
+          @for (t of tournaments(); track t.id) {
+            <tr class="hover:bg-white/2 transition-colors">
+              <td class="p-4">
+                <div class="font-bold text-white">{{ t.name }}</div>
+                <div class="text-xs text-gray-500">{{ t.category }} | ${{ t.entry_fee }}</div>
+              </td>
+              <td class="p-4 text-gray-300 text-sm">
+                {{ t.start_date | date:'short' }}
+              </td>
+              <td class="p-4">
+                <span class="px-2 py-1 rounded text-[10px] font-bold uppercase border"
+                      [ngClass]="{
+                    'bg-green-500/20 text-green-400 border-green-500/30': t.status === 'OPEN',
+                    'bg-yellow-500/20 text-yellow-400 border-yellow-500/30': t.status === 'IN_PROGRESS',
+                    'bg-gray-500/20 text-gray-400 border-gray-500/30': t.status === 'COMPLETED'
+                  }">
+                  {{ t.status }}
+                </span>
+              </td>
+              <td class="p-4 text-center text-white font-mono">
+                {{ t.registered_teams_count || 0 }} / {{ t.max_teams }}
+              </td>
+              <td class="p-4 text-right">
+                <button (click)="openEdit(t)" class="text-blue-400 hover:text-white transition-colors p-2 bg-blue-500/10 rounded-lg">
+                  <i class="pi pi-pencil"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<p-dialog
+  [(visible)]="showModal"
+  [modal]="true"
+  [header]="isEditing() ? 'Editar Torneo' : 'Crear Torneo'"
+  [style]="{ width: '40rem' }"
+  styleClass="dark-modal">
+
+  <form [formGroup]="form" (ngSubmit)="save()" class="flex flex-col gap-4 pt-4">
+
+    <div>
+      <label class="block text-gray-400 text-xs font-bold mb-1">Nombre del Torneo</label>
+      <input formControlName="name" type="text" class="w-full bg-[#0D0D0D] border border-white/10 rounded-lg p-3 text-white focus:border-blue-500 outline-none">
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-gray-400 text-xs font-bold mb-1">Categoría</label>
+        <select formControlName="category" class="w-full bg-[#0D0D0D] border border-white/10 rounded-lg p-3 text-white outline-none">
+          <option value="Open">Open</option>
+          <option value="Low Elo">Low Elo</option>
+          <option value="High Elo">High Elo</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-gray-400 text-xs font-bold mb-1">Fecha de Inicio</label>
+        <input formControlName="start_date" type="datetime-local" class="w-full bg-[#0D0D0D] border border-white/10 rounded-lg p-3 text-white outline-none">
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-gray-400 text-xs font-bold mb-1">Costo Entrada ($)</label>
+        <input formControlName="entry_fee" type="number" class="w-full bg-[#0D0D0D] border border-white/10 rounded-lg p-3 text-white outline-none">
+      </div>
+      <div>
+        <label class="block text-gray-400 text-xs font-bold mb-1">Premio ($)</label>
+        <input formControlName="prize_pool" type="number" class="w-full bg-[#0D0D0D] border border-white/10 rounded-lg p-3 text-white outline-none">
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-gray-400 text-xs font-bold mb-1">Equipos Máximos</label>
+      <input formControlName="max_teams" type="number" class="w-full bg-[#0D0D0D] border border-white/10 rounded-lg p-3 text-white outline-none">
+    </div>
+
+    @if (isEditing()) {
+      <div>
+        <label class="block text-gray-400 text-xs font-bold mb-1">Estado</label>
+        <select formControlName="status" class="w-full bg-[#0D0D0D] border border-white/10 rounded-lg p-3 text-white outline-none">
+          <option value="OPEN">Inscripciones Abiertas</option>
+          <option value="IN_PROGRESS">En Progreso</option>
+          <option value="COMPLETED">Finalizado</option>
+          <option value="CANCELLED">Cancelado</option>
+        </select>
+      </div>
+    }
+
+    <div class="flex justify-end gap-3 mt-4 pt-4 border-t border-white/5">
+      <button type="button" (click)="closeModal()" class="px-4 py-2 text-gray-400 hover:text-white">Cancelar</button>
+      <button
+        type="submit"
+        [disabled]="form.invalid || isLoading()"
+        class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg transition-colors disabled:opacity-50">
+        {{ isEditing() ? 'Guardar Cambios' : 'Crear Torneo' }}
+      </button>
+    </div>
+
+  </form>
+</p-dialog>
